@@ -1,8 +1,8 @@
 <?php
 
-namespace Paksuco\Support\Tables;
+namespace Paksuco\Statics\Tables;
 
-use Paksuco\Support\Models\StaticsCategory;
+use Paksuco\Statics\Models\StaticsCategory;
 
 class StaticsCategoriesTable extends \Paksuco\Table\Contracts\TableSettings
 {
@@ -27,7 +27,7 @@ class StaticsCategoriesTable extends \Paksuco\Table\Contracts\TableSettings
             "name" => "title",
             "type" => "field",
             "format" => "string",
-            "class" => "w-full bg-gray-50",
+            "class" => "",
             "sortable" => true,
             "queryable" => true,
             "filterable" => false,
@@ -59,6 +59,7 @@ class StaticsCategoriesTable extends \Paksuco\Table\Contracts\TableSettings
         [
             "name" => "actions",
             "type" => "callback",
+            "class" => "flex",
             "format" => StaticsCategoriesTable::class . "::getActions",
             "sortable" => false,
             "queryable" => false,
@@ -78,14 +79,14 @@ class StaticsCategoriesTable extends \Paksuco\Table\Contracts\TableSettings
     public static function getActions($item)
     {
         return "<a href='#new_category_form'>
-            <button type='button' class='mr-1 rounded px-3 py-1 bg-indigo-700 text-white shadow' @click='editCategory({$item->id})'>" .
+            <button type='button' class='px-3 py-1 mr-1 text-white bg-indigo-700 rounded shadow' x-on:click='editCategory({$item->id})'>" .
                 __("Edit") . "
             </button>
         </a>
         <form action='" . route("paksuco.staticcategory.destroy", $item) . "' method='POST'>
             <input name='_token'  type='hidden' value='".csrf_token()."'>
             <input name='_method' type='hidden' value='DELETE'>
-            <button type='submit' class='rounded px-3 py-1 bg-red-700 text-white shadow'>" .
+            <button type='submit' class='px-3 py-1 text-white bg-red-700 rounded shadow'>" .
                 __("Delete") .
             "</button>
         </form>";

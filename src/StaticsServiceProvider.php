@@ -21,7 +21,7 @@ class StaticsServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->handleConfigs();
-        $this->handleMigrations();
+        $this->handleDatabase();
         $this->handleViews();
         $this->handleTranslations();
         $this->handleRoutes();
@@ -68,11 +68,6 @@ class StaticsServiceProvider extends ServiceProvider
     private function handleViews()
     {
         $this->loadViewsFrom(__DIR__ . '/../views', 'paksuco-statics');
-
-        $this->publishes([
-            __DIR__ . '/../views' =>
-            base_path('resources/views/vendor/paksuco-statics'),
-        ], "views");
     }
 
     private function handleResources()
@@ -83,12 +78,17 @@ class StaticsServiceProvider extends ServiceProvider
         ], "pages-tinymce");
     }
 
-    private function handleMigrations()
+    private function handleDatabase()
     {
         $this->publishes([
-            __DIR__ . '/../migrations' =>
+            __DIR__ . '/../database/migrations' =>
             base_path('database/migrations'),
         ], "migrations");
+
+        $this->publishes([
+            __DIR__ . '/../database/seeders' =>
+            base_path('database/seeders'),
+        ], "seeders");
     }
 
     private function handleRoutes()

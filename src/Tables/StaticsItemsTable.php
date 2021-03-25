@@ -34,7 +34,7 @@ class StaticsItemsTable extends \Paksuco\Table\Contracts\TableSettings
             "filterable" => true,
         ],
         [
-            "name" => 'question',
+            "name" => 'title',
             "type" => "field",
             "class" => "w-full bg-gray-50",
             "format" => "string",
@@ -43,7 +43,7 @@ class StaticsItemsTable extends \Paksuco\Table\Contracts\TableSettings
             "filterable" => false,
         ],
         [
-            "name" => "answer",
+            "name" => "excerpt",
             "type" => "callback",
             "format" => StaticsItemsTable::class . "::getExcerpt",
             "sortable" => true,
@@ -101,6 +101,7 @@ class StaticsItemsTable extends \Paksuco\Table\Contracts\TableSettings
         [
             "name" => "actions",
             "type" => "callback",
+            "class" => "flex",
             "format" => StaticsItemsTable::class . "::getActions",
             "sortable" => false,
             "queryable" => false,
@@ -124,20 +125,20 @@ class StaticsItemsTable extends \Paksuco\Table\Contracts\TableSettings
 
     public static function getActions($item)
     {
-        return "<a href='". route("paksuco.static.show", $item) . "'>
-            <button type='button' class='mr-1 rounded px-3 py-1 bg-blue-700 text-white shadow'>" .
+        return "<a href='". route("paksuco.statics.show", $item) . "'>
+            <button type='button' class='px-3 py-1 mr-1 text-white bg-blue-700 rounded shadow'>" .
                 __("Show") . "
             </button>
         </a>
-        <a href='". route("paksuco.static.edit", $item) . "'>
-            <button type='button' class='mr-1 rounded px-3 py-1 bg-indigo-700 text-white shadow'>" .
+        <a href='". route("paksuco.statics.edit", $item) . "'>
+            <button type='button' class='px-3 py-1 mr-1 text-white bg-indigo-700 rounded shadow'>" .
                 __("Edit") . "
             </button>
         </a>
-        <form action='" . route("paksuco.static.destroy", $item) . "' method='POST'>
+        <form action='" . route("paksuco.statics.destroy", $item) . "' method='POST'>
             <input name='_token'  type='hidden' value='".csrf_token()."'>
             <input name='_method' type='hidden' value='DELETE'>
-            <button type='submit' class='rounded px-3 py-1 bg-red-700 text-white shadow'>" .
+            <button type='submit' class='px-3 py-1 text-white bg-red-700 rounded shadow'>" .
                 __("Delete") .
             "</button>
         </form>";

@@ -6,7 +6,11 @@ use \Illuminate\Database\Eloquent\Model;
 
 class StaticsCategory extends Model
 {
-    protected $table = "static_categories";
+    protected $fillable = [
+        "title", "slug", "description", "parent_id", "order"
+    ];
+
+    protected $table = "statics_categories";
 
     public function getRouteKeyName()
     {

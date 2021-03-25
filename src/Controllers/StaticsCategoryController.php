@@ -46,7 +46,7 @@ class StaticsCategoryController extends Controller
 
         $request->validate([
             "title" => "required|filled",
-            "slug" => "unique:static_categories,slug,NULL,id",
+            "slug" => "unique:statics_categories,slug,NULL,id",
             "description" => "present"
         ]);
 
@@ -68,12 +68,23 @@ class StaticsCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function frontindex()
     {
-        $static = StaticsItem::findOrFail($id);
+        return view("paksuco-statics::frontend.categoryindex", [
+            "extends" => config("paksuco-statics.frontend.template_to_extend", "layouts.app"),
+        ]);
+    }
 
-        return view("paksuco-statics::frontend.show", [
-            "static" => $static,
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function frontshow(StaticsCategory $category)
+    {
+        return view("paksuco-statics::frontend.showcategory", [
+            "statics" => $category->items,
             "extends" => config("paksuco-statics.frontend.template_to_extend", "layouts.app"),
         ]);
     }
@@ -109,9 +120,9 @@ class StaticsCategoryController extends Controller
         ]);
 
         $request->validate([
-            "id" => "required|exists:static_categories,id",
+            "id" => "required|exists:statics_categories,id",
             "title" => "required|filled",
-            "slug" => "unique:static_categories,slug,$id,id",
+            "slug" => "unique:statics_categories,slug,$id,id",
             "description" => "present",
             "parent_id" => "present|not_in:$id"
         ]);

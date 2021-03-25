@@ -53,7 +53,7 @@ class StaticsController extends Controller
         $request->merge(["slug" => Str::slug($request->title)]);
 
         $request->validate([
-            "slug" => "unique:static_items,slug,NULL,id",
+            "slug" => "unique:statics_items,slug,NULL,id",
             "content" => "required|filled",
             "category_id" => "present",
             "publish" => "required|filled",
@@ -71,23 +71,8 @@ class StaticsController extends Controller
         $static->visits = 0;
         $static->save();
 
-        return redirect()->route("paksuco.static.index")->with("success", "Page has been successfully created.");
+        return redirect()->route("paksuco.statics.index")->with("success", "Page has been successfully created.");
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show(StaticsItem $static)
-    {
-        return view("paksuco-statics::frontend.show", [
-            "static" => $static,
-            "extends" => config("paksuco-statics.frontend.template_to_extend", "layouts.app"),
-        ]);
-    }
-
 
     /**
      * Display the specified resource.
@@ -99,6 +84,21 @@ class StaticsController extends Controller
     {
         return view("paksuco-statics::frontend.index", [
             "extends" => config("paksuco-statics.frontend.template_to_extend", "layouts.app"),
+        ]);
+    }
+
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function frontshow(StaticsItem $static)
+    {
+        return view("paksuco-statics::frontend.show", [
+            "extends" => config("paksuco-statics.frontend.template_to_extend", "layouts.app"),
+            "static" => $static
         ]);
     }
 
@@ -134,7 +134,7 @@ class StaticsController extends Controller
         $request->merge(["slug" => Str::slug($request->title)]);
 
         $request->validate([
-            "slug" => "unique:static_items,slug,".$static->id.",id",
+            "slug" => "unique:statics_items,slug,".$static->id.",id",
             "content" => "required|filled",
             "category_id" => "present",
             "publish" => "required|filled",
@@ -148,7 +148,7 @@ class StaticsController extends Controller
         }
         $static->save();
 
-        return redirect()->route("paksuco.static.index")->with("success", "Page successfully updated");
+        return redirect()->route("paksuco.statics.index")->with("success", "Page successfully updated");
     }
 
     /**
@@ -160,7 +160,7 @@ class StaticsController extends Controller
     public function destroy(StaticsItem $static)
     {
         $static->delete();
-        return redirect()->route("paksuco.static.index")->with("success", "STATIC Item has been successfully deleted");
+        return redirect()->route("paksuco.statics.index")->with("success", "STATIC Item has been successfully deleted");
     }
 
     public function upload(Request $request)
