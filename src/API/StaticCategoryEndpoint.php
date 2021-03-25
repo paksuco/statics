@@ -1,12 +1,12 @@
 <?php
 
-namespace Paksuco\Static\API;
+namespace Paksuco\Statics\API;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Paksuco\Static\Models\StaticCategory;
+use Paksuco\Statics\Models\StaticsCategory;
 
-class StaticCategoryEndpoint extends Controller
+class StaticsCategoryEndpoint extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,7 +15,7 @@ class StaticCategoryEndpoint extends Controller
      */
     public function index()
     {
-        return response()->json(StaticCategory::all());
+        return response()->json(StaticsCategory::all());
     }
 
     /**
@@ -37,7 +37,7 @@ class StaticCategoryEndpoint extends Controller
      */
     public function show($id)
     {
-        return response()->json(StaticCategory::find($id));
+        return response()->json(StaticsCategory::find($id));
     }
 
     /**

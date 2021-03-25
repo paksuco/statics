@@ -1,11 +1,11 @@
 <?php
 
-namespace Paksuco\Static\API;
+namespace Paksuco\Statics\API;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
-class StaticItemEndpoint extends Controller
+class StaticsItemEndpoint extends Controller
 {
     /**
      * Display a listing of the resource.

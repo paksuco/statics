@@ -1,14 +1,15 @@
 <?php
 
-namespace Paksuco\Static\Controllers;
+namespace Paksuco\Statics\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Paksuco\Static\Models\StaticItem;
+use Paksuco\Statics\Models\StaticsCategory;
+use Paksuco\Statics\Models\StaticsItem;
 
-class StaticController extends Controller
+class StaticsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -32,7 +33,7 @@ class StaticController extends Controller
         return view("paksuco-statics::backend.form", [
             "extends" => config("paksuco-statics.backend.template_to_extend", "layouts.app"),
             "edit" => false,
-            "categories" => StaticCategory::all(),
+            "categories" => StaticsCategory::all(),
             "static" => null
         ]);
     }
@@ -58,7 +59,7 @@ class StaticController extends Controller
             "publish" => "required|filled",
         ]);
 
-        $static = new StaticItem();
+        $static = new StaticsItem();
         $static->category_id = $category_id ?? null;
         $static->title = $request->title;
         $static->slug = Str::slug($request->title);
@@ -79,7 +80,7 @@ class StaticController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(StaticItem $static)
+    public function show(StaticsItem $static)
     {
         return view("paksuco-statics::frontend.show", [
             "static" => $static,
@@ -107,13 +108,13 @@ class StaticController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(StaticItem $static)
+    public function edit(StaticsItem $static)
     {
         return view("paksuco-statics::backend.form", [
             "extends" => config("paksuco-statics.backend.template_to_extend", "layouts.app"),
             "edit" => true,
             "static" => $static,
-            "categories" => StaticCategory::all()
+            "categories" => StaticsCategory::all()
         ]);
     }
 
@@ -124,7 +125,7 @@ class StaticController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, StaticItem $static)
+    public function update(Request $request, StaticsItem $static)
     {
         $request->validate([
             "title" => "required|filled"
@@ -156,7 +157,7 @@ class StaticController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(StaticItem $static)
+    public function destroy(StaticsItem $static)
     {
         $static->delete();
         return redirect()->route("paksuco.static.index")->with("success", "STATIC Item has been successfully deleted");

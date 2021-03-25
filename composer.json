@@ -1,5 +1,5 @@
 {
-    "name": "paksuco/static",
+    "name": "paksuco/statics",
     "description": "WIP - Common static pages for Laravel (Faq, Blog, Menu Pages etc)",
     "keywords": [
         "laravel",
@@ -29,21 +29,21 @@
     },
     "autoload": {
         "psr-4": {
-            "Paksuco\\Static\\": "src/"
+            "Paksuco\\Statics\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Paksuco\\Static\\Tests\\": "tests/"
+            "Paksuco\\Statics\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Paksuco\\Static\\StaticServiceProvider"
+                "Paksuco\\Statics\\StaticsServiceProvider"
             ],
             "aliases": {
-                "Package": "Paksuco\\Static\\Facade"
+                "Package": "Paksuco\\Statics\\Facade"
             }
         }
     },

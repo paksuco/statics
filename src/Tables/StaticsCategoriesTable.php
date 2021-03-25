@@ -2,11 +2,11 @@
 
 namespace Paksuco\Support\Tables;
 
-use Paksuco\Support\Models\StaticCategory;
+use Paksuco\Support\Models\StaticsCategory;
 
-class StaticCategoriesTable extends \Paksuco\Table\Contracts\TableSettings
+class StaticsCategoriesTable extends \Paksuco\Table\Contracts\TableSettings
 {
-    public $model = StaticCategory::class;
+    public $model = StaticsCategory::class;
     public $relations = ["parent"];
     public $queryable = true;
     public $sortable = true;
@@ -43,7 +43,7 @@ class StaticCategoriesTable extends \Paksuco\Table\Contracts\TableSettings
         [
             "name" => "parent",
             "type" => "callback",
-            "format" => StaticCategoriesTable::class . "::getParentTitle",
+            "format" => StaticsCategoriesTable::class . "::getParentTitle",
             "sortable" => true,
             "queryable" => true,
             "filterable" => true,
@@ -59,7 +59,7 @@ class StaticCategoriesTable extends \Paksuco\Table\Contracts\TableSettings
         [
             "name" => "actions",
             "type" => "callback",
-            "format" => StaticCategoriesTable::class . "::getActions",
+            "format" => StaticsCategoriesTable::class . "::getActions",
             "sortable" => false,
             "queryable" => false,
             "filterable" => false,
@@ -68,7 +68,7 @@ class StaticCategoriesTable extends \Paksuco\Table\Contracts\TableSettings
 
     public static function getParentTitle($category)
     {
-        if ($category->parent instanceof StaticCategory) {
+        if ($category->parent instanceof StaticsCategory) {
             return $category->parent->title;
         }
 

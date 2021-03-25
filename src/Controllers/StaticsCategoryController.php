@@ -1,14 +1,14 @@
 <?php
 
-namespace Paksuco\Static\Controllers;
+namespace Paksuco\Statics\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;
-use Paksuco\Static\Models\StaticCategory;
-use Paksuco\Static\Models\StaticItem;
+use Paksuco\Statics\Models\StaticsCategory;
+use Paksuco\Statics\Models\StaticsItem;
 
-class StaticCategoryController extends Controller
+class StaticsCategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -50,7 +50,7 @@ class StaticCategoryController extends Controller
             "description" => "present"
         ]);
 
-        $category = new StaticCategory();
+        $category = new StaticsCategory();
         $category->title = $request->title;
         $category->slug = Str::slug($request->title);
         $category->description = $request->description;
@@ -70,7 +70,7 @@ class StaticCategoryController extends Controller
      */
     public function show($id)
     {
-        $static = StaticItem::findOrFail($id);
+        $static = StaticsItem::findOrFail($id);
 
         return view("paksuco-statics::frontend.show", [
             "static" => $static,
@@ -86,7 +86,7 @@ class StaticCategoryController extends Controller
      */
     public function edit($id)
     {
-        $static = StaticItem::findOrFail($id);
+        $static = StaticsItem::findOrFail($id);
 
         return view("paksuco-statics::backend.form", [
             "extends" => config("paksuco-statics.backend.template_to_extend", "layouts.app"),
@@ -116,7 +116,7 @@ class StaticCategoryController extends Controller
             "parent_id" => "present|not_in:$id"
         ]);
 
-        $category = StaticCategory::find($id);
+        $category = StaticsCategory::find($id);
         $category->title = $request->title;
         $category->slug = Str::slug($request->title);
         $category->description = $request->description;
@@ -134,7 +134,7 @@ class StaticCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(StaticCategory $category)
+    public function destroy(StaticsCategory $category)
     {
         $category->delete();
 

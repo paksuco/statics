@@ -1,10 +1,10 @@
 <?php
 
-namespace Paksuco\Static\Models;
+namespace Paksuco\Statics\Models;
 
 use \Illuminate\Database\Eloquent\Model;
 
-class StaticItem extends Model
+class StaticsItem extends Model
 {
 
     protected $table = "static_items";
@@ -16,6 +16,6 @@ class StaticItem extends Model
 
     public function category()
     {
-        return $this->belongsTo(StaticCategory::class, "category_id", "id");
+        return $this->belongsTo(StaticsCategory::class, "category_id", "id");
     }
 }

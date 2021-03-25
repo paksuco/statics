@@ -24,7 +24,7 @@
             neque a nisi posuere mollis vitae vitae magna. Praesent non volutpat sem, a maximus libero.
         </p>
         @include("paksuco-statics::backend.submitresults")
-        @livewire("paksuco-table::table", ["class" => new \Paksuco\Static\Tables\StaticItemsTable()])
+        @livewire("paksuco-table::table", ["class" => new \Paksuco\Statics\Tables\StaticsItemsTable()])
     </div>
 </div>
 @endsection

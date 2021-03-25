@@ -1,10 +1,10 @@
 <?php
 
-namespace Paksuco\Static;
+namespace Paksuco\Statics;
 
 use Illuminate\Support\ServiceProvider;
 
-class StaticServiceProvider extends ServiceProvider
+class StaticsServiceProvider extends ServiceProvider
 {
     /**
      * Indicates if loading of the provider is deferred.

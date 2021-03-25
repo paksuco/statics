@@ -1,14 +1,14 @@
 <?php
 
-namespace Paksuco\Static\Tables;
+namespace Paksuco\Statics\Tables;
 
 use Illuminate\Support\Str;
-use Paksuco\Static\Models\StaticCategory;
-use Paksuco\Static\Models\StaticItem;
+use Paksuco\Statics\Models\StaticsCategory;
+use Paksuco\Statics\Models\StaticsItem;
 
-class StaticItemsTable extends \Paksuco\Table\Contracts\TableSettings
+class StaticsItemsTable extends \Paksuco\Table\Contracts\TableSettings
 {
-    public $model = StaticItem::class;
+    public $model = StaticsItem::class;
     public $relations = ["category"];
     public $queryable = true;
     public $sortable = true;
@@ -28,7 +28,7 @@ class StaticItemsTable extends \Paksuco\Table\Contracts\TableSettings
         [
             "name" => "category",
             "type" => "callback",
-            "format" => StaticItemsTable::class . "::getCategoryTitle",
+            "format" => StaticsItemsTable::class . "::getCategoryTitle",
             "sortable" => true,
             "queryable" => true,
             "filterable" => true,
@@ -45,7 +45,7 @@ class StaticItemsTable extends \Paksuco\Table\Contracts\TableSettings
         [
             "name" => "answer",
             "type" => "callback",
-            "format" => StaticItemsTable::class . "::getExcerpt",
+            "format" => StaticsItemsTable::class . "::getExcerpt",
             "sortable" => true,
             "queryable" => true,
             "filterable" => false,
@@ -101,7 +101,7 @@ class StaticItemsTable extends \Paksuco\Table\Contracts\TableSettings
         [
             "name" => "actions",
             "type" => "callback",
-            "format" => StaticItemsTable::class . "::getActions",
+            "format" => StaticsItemsTable::class . "::getActions",
             "sortable" => false,
             "queryable" => false,
             "filterable" => false,
@@ -115,7 +115,7 @@ class StaticItemsTable extends \Paksuco\Table\Contracts\TableSettings
 
     public static function getCategoryTitle($item)
     {
-        if ($item->category instanceof StaticCategory) {
+        if ($item->category instanceof StaticsCategory) {
             return $item->category->title;
         }
 

@@ -13,7 +13,7 @@ class CreateSupportTables extends Migration
      */
     public function up()
     {
-        Schema::create('static_categories', function (Blueprint $table) {
+        Schema::create('statics_categories', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string("title");
             $table->string("slug");
@@ -25,7 +25,7 @@ class CreateSupportTables extends Migration
             $table->foreign("parent_id")->references("id")->on("static_categories")->cascadeOnDelete();
         });
 
-        Schema::create('static_items', function (Blueprint $table) {
+        Schema::create('statics_items', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->foreignId('category_id')->nullable();
             $table->string("title", 100);

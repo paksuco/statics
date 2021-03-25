@@ -12,11 +12,11 @@ Route::group([
     'middleware' => config("paksuco-statics.backend.middleware.web.auth"),
     'as' => 'paksuco.',
 ], function () {
-    Route::resource('/static/categories', "\Paksuco\Static\Controllers\StaticCategoryController")
+    Route::resource('/static/categories', "\Paksuco\Statics\Controllers\StaticsCategoryController")
         ->names("staticcategory");
-    Route::post("/static/upload", "\Paksuco\Static\Controllers\StaticController@upload")
+    Route::post("/static/upload", "\Paksuco\Statics\Controllers\StaticsController@upload")
         ->name("static.upload");
-    Route::resource('/static', "\Paksuco\Static\Controllers\StaticController")
+    Route::resource('/static', "\Paksuco\Statics\Controllers\StaticsController")
         ->names("static");
 });
 
@@ -26,7 +26,7 @@ Route::group([
     'middleware' => config("paksuco-statics.backend.middleware.web.guest"),
     'as' => 'paksuco.',
 ], function () {
-    Route::get('/static', "\Paksuco\Static\Controllers\StaticController@frontindex")->name("static.home");
+    Route::get('/static', "\Paksuco\Statics\Controllers\StaticsController@frontindex")->name("static.home");
 });
 
 /*Route::group([
@@ -34,7 +34,7 @@ Route::group([
     'middleware' => config("paksuco-statics.backend.middleware.api.guest"),
 ], function () {
     Route::apiResources([
-        'static' => \Paksuco\Support\API\StaticItemEndpoint::class,
-        'staticcategory' => \Paksuco\Static\API\StaticCategoryEndpoint::class,
+        'static' => \Paksuco\Statics\API\StaticsItemEndpoint::class,
+        'staticcategory' => \Paksuco\Statics\API\StaticsCategoryEndpoint::class,
     ]);
 });*/

@@ -32,7 +32,7 @@
             "key" => "parent_id",
             "model" => "",
             "value" => "",
-            "props" => ["values" => \Paksuco\Support\Models\StaticCategory::select(["id",
+            "props" => ["values" => \Paksuco\Statics\Models\StaticsCategory::select(["id",
             "title"])->get()->pluck("title", "id")]
             ], key("parent"))
             <div class="text-right">

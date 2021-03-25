@@ -13,7 +13,7 @@
                 </div>
                 <div class="md:w-2/3">
                     <div class="p-4">
-                        @forelse(\Paksuco\Static\Models\StaticItem::all() as $faqitem)
+                        @forelse(\Paksuco\Statics\Models\StaticsItem::all() as $faqitem)
                         <div class="mb-2">
                             <div class="flex flex-row-reverse px-2 py-3 mt-2 text-lg font-medium text-black text-gray-800 bg-white rounded-sm cursor-pointer hover:bg-white">
                                 <div class="flex-auto">{{$faqitem->question}}</div>
