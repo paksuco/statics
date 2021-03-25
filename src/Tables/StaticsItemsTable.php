@@ -15,6 +15,7 @@ class StaticsItemsTable extends \Paksuco\Table\Contracts\TableSettings
     public $pageable = true;
     public $perPages = [10, 25, 50, 100];
     public $perPage = 10;
+    public $appends = [];
 
     public $fields = [
         [
@@ -109,6 +110,13 @@ class StaticsItemsTable extends \Paksuco\Table\Contracts\TableSettings
         ],
     ];
 
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->appends = request()->query();
+    }
+
     public static function getExcerpt($item)
     {
         return wordwrap(Str::limit(strip_tags($item->answer), 100), 35, "<br>");
@@ -123,9 +131,22 @@ class StaticsItemsTable extends \Paksuco\Table\Contracts\TableSettings
         return __("(No Category)");
     }
 
+    public function getFilters()
+    {
+        return function ($query) {
+            $request = request();
+            $parent = $request->has("category") ? $request->category : null;
+            if ($parent) {
+                $categories = StaticsCategory::setParent($parent)->select("id")->get()->pluck("id");
+                $query->whereIn("category_id", $categories);
+            }
+        };
+    }
+
+
     public static function getActions($item)
     {
-        return "<a href='". route("paksuco.statics.show", $item) . "'>
+        return "<a href='". route("paksuco.statics.frontshow", $item) . "' target='_blank'>
             <button type='button' class='px-3 py-1 mr-1 text-white bg-blue-700 rounded shadow'>" .
                 __("Show") . "
             </button>

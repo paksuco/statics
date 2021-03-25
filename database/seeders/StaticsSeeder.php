@@ -17,11 +17,11 @@ class StaticsSeeder extends Seeder
         $this->faker = Faker::create(app()->getLocale());
     }
 
-    public function createCategory($order, $parent_id)
+    public function createCategory($order, $parent_id, $name = null)
     {
         // "title", "slug", "description", "parent_id", "order"
         $category = new StaticsCategory();
-        $category->title = $this->faker->company;
+        $category->title = $name ?? $this->faker->company;
         $category->slug = \Illuminate\Support\Str::slug($category->title);
         $category->description = $this->faker->sentences(5, true);
         $category->parent_id = $parent_id;
@@ -68,8 +68,11 @@ class StaticsSeeder extends Seeder
         StaticsCategory::truncate();
         Schema::enableForeignKeyConstraints();
 
-        for ($i = 0; $i < 5; $i++) {
-            $this->createCategoryWithParent($i);
+        foreach (["Pages", "Header Menu", "Footer Menu", "FAQ Items"] as $key => $name) {
+            $parent = $this->createCategory($key, null, $name);
+            for ($p = 0; $p < 5; $p++) {
+                $this->createCategoryWithParent($p, $parent->id);
+            }
         }
     }
 }

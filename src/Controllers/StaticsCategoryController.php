@@ -15,10 +15,26 @@ class StaticsCategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $parent = $request->has("category") ? $request->category : null;
+        $model  = $parent
+        ? StaticsCategory::where("slug", $parent)->first()
+        : null;
+        $title      = $model ? $model->title : "Categories";
+        $categories = $model
+            ? StaticsCategory::setParent($parent)
+            ->select(["id", "title"])
+            ->get()
+            ->pluck("title", "id")
+            : StaticsCategory::select(["id", "title"])
+            ->get()
+            ->pluck("title", "id");
+
         return view("paksuco-statics::backend.categories", [
-            "extends" => config("paksuco-statics.backend.template_to_extend", "layouts.app"),
+            "extends"    => config("paksuco-statics.backend.template_to_extend", "layouts.app"),
+            "categories" => $categories,
+            "title"      => $title
         ]);
     }
 
