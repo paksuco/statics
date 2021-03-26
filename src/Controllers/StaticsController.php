@@ -145,8 +145,8 @@ class StaticsController extends Controller
             "publish" => "required|filled",
         ]);
 
-        $static->question = $request->title;
-        $static->answer = $request->content;
+        $static->title = $request->title;
+        $static->content = $request->content;
         $static->slug = Str::slug($request->title);
         if ($request->publish != "0") {
             $static->published = $request->publish == "1" ? true : false;
