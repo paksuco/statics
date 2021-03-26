@@ -128,14 +128,12 @@ class StaticsItemsTable extends \Paksuco\Table\Contracts\TableSettings
     {
         $parent = isset($request["category"]) ? $request["category"] : null;
         return function ($query) use ($parent) {
-            logger()->info("parent: " . $parent);
             if ($parent) {
                 $categories = StaticsCategory::setParent($parent)->select("id")->get()->pluck("id");
                 $query->whereIn("category_id", $categories);
             }
         };
     }
-
 
     public static function getActions($item)
     {

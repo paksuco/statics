@@ -21,7 +21,7 @@ class StaticsCategoryController extends Controller
         $model  = $parent
         ? StaticsCategory::where("slug", $parent)->first()
         : null;
-        $title      = $model ? $model->title . " Categories" : "Categories";
+        $title      = $model ? \Illuminate\Support\Str::singular($model->title) . " Categories" : "Categories";
         $categories = $model
             ? StaticsCategory::setParent($parent)
             ->select(["id", "title"])

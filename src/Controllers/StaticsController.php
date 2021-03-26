@@ -20,7 +20,7 @@ class StaticsController extends Controller
     {
         $parent = $request->has("category") ? $request->category : null;
         $model  = $parent ? StaticsCategory::where("slug", $parent)->first() : null;
-        $title  = $model ? $model->title . " Items" : "Static Items";
+        $title  = $model ? \Illuminate\Support\Str::singular($model->title) . " Items" : "Static Items";
 
         return view("paksuco-statics::backend.index", [
             "extends" => config("paksuco-statics.backend.template_to_extend", "layouts.app"),
