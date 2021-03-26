@@ -13,7 +13,6 @@ class StaticsCategoriesTable extends \Paksuco\Table\Contracts\TableSettings
     public $pageable = true;
     public $perPages = [10, 25, 50, 100];
     public $perPage = 10;
-    public $appends = ["category"];
 
     public $fields = [
         [
@@ -42,7 +41,8 @@ class StaticsCategoriesTable extends \Paksuco\Table\Contracts\TableSettings
             "filterable" => false,
         ],
         [
-            "name" => "parent",
+            "title" => "Parent Category",
+            "name" => "parent_id",
             "type" => "callback",
             "format" => StaticsCategoriesTable::class . "::getParentTitle",
             "sortable" => true,
@@ -68,18 +68,10 @@ class StaticsCategoriesTable extends \Paksuco\Table\Contracts\TableSettings
         ],
     ];
 
-    public function __construct()
+    public function getFilters($request)
     {
-        parent::__construct();
-        $this->appends = request()->query();
-        dump($this->appends);
-    }
-
-    public function getFilters()
-    {
-        return function ($query) {
-            $request = request();
-            $parent = $request->has("category") ? $request->category : null;
+        $parent = isset($request["category"]) ? $request["category"] : null;
+        return function ($query) use($parent) {
             if ($parent) {
                 $query->setParent($parent);
             }

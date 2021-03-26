@@ -4,7 +4,7 @@
     <div class="items-end w-full">
         <div class="flex">
             <div class="w-2/3">
-                <h2 class="mb-3 text-3xl font-semibold" style="line-height: 1em">@lang("Common Questions & Answers")</h2>
+                <h2 class="mb-3 text-3xl font-semibold" style="line-height: 1em">{{__($title)}}</h2>
             </div>
             <div class="w-1/3 text-right">
                 <a href="{{route('paksuco.statics.create')}}"

@@ -21,7 +21,7 @@ class StaticsCategoryController extends Controller
         $model  = $parent
         ? StaticsCategory::where("slug", $parent)->first()
         : null;
-        $title      = $model ? $model->title : "Categories";
+        $title      = $model ? $model->title . " Categories" : "Categories";
         $categories = $model
             ? StaticsCategory::setParent($parent)
             ->select(["id", "title"])
@@ -34,7 +34,8 @@ class StaticsCategoryController extends Controller
         return view("paksuco-statics::backend.categories", [
             "extends"    => config("paksuco-statics.backend.template_to_extend", "layouts.app"),
             "categories" => $categories,
-            "title"      => $title
+            "title"      => $title,
+            "parent"     => $parent
         ]);
     }
 

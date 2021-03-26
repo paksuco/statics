@@ -14,8 +14,7 @@ class StaticsItemsTable extends \Paksuco\Table\Contracts\TableSettings
     public $sortable = true;
     public $pageable = true;
     public $perPages = [10, 25, 50, 100];
-    public $perPage = 10;
-    public $appends = [];
+    public $perPage = 25;
 
     public $fields = [
         [
@@ -37,7 +36,7 @@ class StaticsItemsTable extends \Paksuco\Table\Contracts\TableSettings
         [
             "name" => 'title',
             "type" => "field",
-            "class" => "w-full bg-gray-50",
+            "class" => "",
             "format" => "string",
             "sortable" => true,
             "queryable" => true,
@@ -78,6 +77,7 @@ class StaticsItemsTable extends \Paksuco\Table\Contracts\TableSettings
         [
             "name" => "published",
             "type" => "field",
+            "class" => "text-center",
             "format" => "checkbox",
             "sortable" => true,
             "queryable" => false,
@@ -110,13 +110,6 @@ class StaticsItemsTable extends \Paksuco\Table\Contracts\TableSettings
         ],
     ];
 
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->appends = request()->query();
-    }
-
     public static function getExcerpt($item)
     {
         return wordwrap(Str::limit(strip_tags($item->answer), 100), 35, "<br>");
@@ -131,11 +124,11 @@ class StaticsItemsTable extends \Paksuco\Table\Contracts\TableSettings
         return __("(No Category)");
     }
 
-    public function getFilters()
+    public function getFilters($request)
     {
-        return function ($query) {
-            $request = request();
-            $parent = $request->has("category") ? $request->category : null;
+        $parent = isset($request["category"]) ? $request["category"] : null;
+        return function ($query) use ($parent) {
+            logger()->info("parent: " . $parent);
             if ($parent) {
                 $categories = StaticsCategory::setParent($parent)->select("id")->get()->pluck("id");
                 $query->whereIn("category_id", $categories);
