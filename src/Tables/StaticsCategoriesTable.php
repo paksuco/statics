@@ -41,6 +41,14 @@ class StaticsCategoriesTable extends \Paksuco\Table\Contracts\TableSettings
             "filterable" => false,
         ],
         [
+            "name" => 'order',
+            "type" => "field",
+            "format" => "string",
+            "sortable" => true,
+            "queryable" => false,
+            "filterable" => false,
+        ],
+        [
             "title" => "Parent Category",
             "name" => "parent_id",
             "type" => "callback",
@@ -91,11 +99,11 @@ class StaticsCategoriesTable extends \Paksuco\Table\Contracts\TableSettings
     {
         return "<a href='#new_category_form'>
             <button type='button' class='px-3 py-1 mr-1 text-white bg-indigo-700 rounded shadow' onclick='editCategory({$item->id})'>" . __("Edit") . "</button>
-        </a>
-        <form action='" . route("paksuco.staticcategory.destroy", $item->id) . "' method='POST'>
+        </a>" . ( $item->is_deletable ?
+        "<form action='" . route("paksuco.staticcategory.destroy", $item->id) . "' method='POST'>
             <input name='_token'  type='hidden' value='" . csrf_token() . "'>
             <input name='_method' type='hidden' value='DELETE'>
             <button type='submit' class='px-3 py-1 text-white bg-red-700 rounded shadow'>" . __("Delete") . "</button>
-        </form>";
+        </form>" : "");
     }
 }

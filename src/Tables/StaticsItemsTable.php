@@ -51,6 +51,14 @@ class StaticsItemsTable extends \Paksuco\Table\Contracts\TableSettings
             "filterable" => false,
         ],
         [
+            "name" => 'order',
+            "type" => "field",
+            "format" => "string",
+            "sortable" => true,
+            "queryable" => false,
+            "filterable" => false,
+        ],
+        [
             "name" => "likes",
             "type" => "field",
             "format" => "string",
@@ -146,13 +154,13 @@ class StaticsItemsTable extends \Paksuco\Table\Contracts\TableSettings
             <button type='button' class='px-3 py-1 mr-1 text-white bg-indigo-700 rounded shadow'>" .
                 __("Edit") . "
             </button>
-        </a>
-        <form action='" . route("paksuco.statics.destroy", $item) . "' method='POST'>
+        </a>" . ( $item->is_deletable ?
+        "<form action='" . route("paksuco.statics.destroy", $item) . "' method='POST'>
             <input name='_token'  type='hidden' value='".csrf_token()."'>
             <input name='_method' type='hidden' value='DELETE'>
             <button type='submit' class='px-3 py-1 text-white bg-red-700 rounded shadow'>" .
                 __("Delete") .
             "</button>
-        </form>";
+        </form>" : "");
     }
 }
