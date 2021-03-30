@@ -35,7 +35,7 @@ class StaticsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // Bind any implementations.
+        $this->app->bind("statics", \Paksuco\Statics\Services\Statics::class);
     }
 
     /**
@@ -45,7 +45,9 @@ class StaticsServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return [];
+        return [
+            \Paksuco\Statics\Services\Statics::class,
+        ];
     }
 
     private function handleConfigs()
