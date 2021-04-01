@@ -1,10 +1,11 @@
 <?php
 
-namespace  Paksuco\Statics\Services;
+namespace Paksuco\Statics\Services;
 
 use Paksuco\Menu\MenuContainer;
 use Paksuco\Statics\Models\StaticsCategory;
 use Paksuco\Statics\Models\StaticsItem;
+use Paksuco\Statics\Tables\StaticsCategoriesTable;
 
 class Statics
 {
@@ -38,5 +39,10 @@ class Statics
     public function pushItem(MenuContainer $menu, StaticsItem $item)
     {
         $menu->addItem($item->title, route("paksuco.statics.frontshow", ["static" => $item]), "", null, $item->order);
+    }
+
+    public function getCategories($parentSlug)
+    {
+        return StaticsCategory::where("slug", $parentSlug)->first()->children;
     }
 }

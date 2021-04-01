@@ -10,19 +10,16 @@
             @csrf
             <div class="mb-3">
                 <label class="w-full text-sm font-semibold">@lang("Category Name")</label>
-                <div class="w-full"><input type="text" x-ref="title" class="w-full form-input"></div>
+                <div class="w-full"><input type="text" name="title" x-ref="title" class="w-full form-input"></div>
             </div>
             <div class="mb-3">
                 <label class="w-full text-sm font-semibold">@lang("Description")</label>
-                <div class="w-full"><textarea x-ref="description" class="w-full form-textarea" rows=5></textarea></div>
+                <div class="w-full"><textarea name="description" x-ref="description" class="w-full form-textarea" rows=5></textarea></div>
             </div>
             <div class="mb-3">
                 <label class="text-sm font-semibold">@lang("Parent Category")</label>
                 <div class="w-full">
-                    <select x-ref="parent_id" class="w-full form-select">
-                        @unless(request()->has("category"))
-                        <option value="">@lang("-- No Parent --")</option>
-                        @endif
+                    <select x-ref="parent_id" name="parent_id" class="w-full form-select">
                         @foreach ($categories as $id => $category)
                             <option value="{{$id}}">{{$category}}</option>
                         @endforeach

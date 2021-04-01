@@ -26,7 +26,7 @@
                             class="px-4 py-2 text-white bg-red-700 border border-red-800 rounded shadow">@lang('Un-publish')</button>
                     @endif
                     <button type="button" class="px-4 py-2 border rounded shadow"
-                        onclick="window.location = '{{route("paksuco.statics.index")}}';">@lang('Go Back')</button>
+                        onclick="window.history.back();">@lang('Go Back')</button>
                 </div>
             </div>
             <input type="text" name="title" placeholder="@lang('Enter Title')"
