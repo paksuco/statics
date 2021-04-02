@@ -4,6 +4,7 @@ namespace Paksuco\Statics\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Paksuco\Statics\Models\StaticsCategory;
@@ -19,12 +20,12 @@ class StaticsController extends Controller
     public function index(Request $request)
     {
         $parent = $request->has("category") ? $request->category : null;
-        $model  = $parent ? StaticsCategory::where("slug", $parent)->first() : null;
-        $title  = $model ? \Illuminate\Support\Str::singular($model->title) . " Items" : "Static Items";
+        $model = $parent ? StaticsCategory::where("slug", $parent)->first() : null;
+        $title = $model ? \Illuminate\Support\Str::singular($model->title) . " Items" : "Static Items";
 
         return view("paksuco-statics::backend.index", [
             "extends" => config("paksuco-statics.backend.template_to_extend", "layouts.app"),
-            "title" => $title
+            "title" => $title,
         ]);
     }
 
@@ -39,7 +40,7 @@ class StaticsController extends Controller
             "extends" => config("paksuco-statics.backend.template_to_extend", "layouts.app"),
             "edit" => false,
             "categories" => StaticsCategory::all(),
-            "static" => null
+            "static" => null,
         ]);
     }
 
@@ -52,7 +53,7 @@ class StaticsController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            "title" => "required|filled"
+            "title" => "required|filled",
         ]);
 
         $request->merge(["slug" => Str::slug($request->title)]);
@@ -92,7 +93,6 @@ class StaticsController extends Controller
         ]);
     }
 
-
     /**
      * Display the specified resource.
      *
@@ -101,9 +101,30 @@ class StaticsController extends Controller
      */
     public function frontshow(StaticsItem $static)
     {
+        $content = $static->content;
+        $matches = null;
+        if (preg_match("/\[link-to-route:(.+)\]/", $content, $matches) > 0) {
+            $route = $matches[1];
+            if (Route::has($route)) {
+                return redirect()->route($route);
+            };
+        } else if (preg_match("/\[link-to-category:(.+)\]/", $content, $matches) > 0) {
+            $slug = $matches[1];
+            $category = StaticsCategory::where('slug', '=', $slug)->first();
+            if ($category instanceof StaticsCategory) {
+                return redirect()->route("paksuco.staticcategory.frontshow", ["category" => $category]);
+            };
+        } else if (preg_match("/\[link-to-page:(.+)\]/", $content, $matches) > 0) {
+            $slug = $matches[1];
+            $page = StaticsItem::where('slug', '=', $slug)->first();
+            if ($page instanceof StaticsItem) {
+                return redirect()->route("paksuco.statics.frontshow", ["static" => $page]);
+            };
+        }
+
         return view("paksuco-statics::frontend.show", [
             "extends" => config("paksuco-statics.frontend.template_to_extend", "layouts.app"),
-            "static" => $static
+            "static" => $static,
         ]);
     }
 
@@ -119,7 +140,7 @@ class StaticsController extends Controller
             "extends" => config("paksuco-statics.backend.template_to_extend", "layouts.app"),
             "edit" => true,
             "static" => $static,
-            "categories" => StaticsCategory::all()
+            "categories" => StaticsCategory::all(),
         ]);
     }
 
@@ -133,13 +154,13 @@ class StaticsController extends Controller
     public function update(Request $request, StaticsItem $static)
     {
         $request->validate([
-            "title" => "required|filled"
+            "title" => "required|filled",
         ]);
 
         $request->merge(["slug" => Str::slug($request->title)]);
 
         $request->validate([
-            "slug" => "unique:statics_items,slug,".$static->id.",id",
+            "slug" => "unique:statics_items,slug," . $static->id . ",id",
             "content" => "required|filled",
             "category_id" => "present",
             "publish" => "required|filled",
@@ -188,7 +209,7 @@ class StaticsController extends Controller
         $url = str_replace(public_path(), '', $path . "/" . $new_name);
 
         return response()->json([
-            'location' => $url
+            'location' => $url,
         ]);
     }
 }
