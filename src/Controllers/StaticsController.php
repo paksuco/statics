@@ -114,7 +114,7 @@ class StaticsController extends Controller
             $slug = $matches[1];
             $category = StaticsCategory::where('slug', '=', $slug)->first();
             if ($category instanceof StaticsCategory) {
-                return redirect()->route("paksuco.staticcategory.frontshow", ["category" => $category]);
+                return redirect()->route("paksuco-statics.category.frontshow", ["category" => $category]);
             };
         } elseif (preg_match("/\[link-to-page:(.+)\]/", $content, $matches) > 0) {
             $path = explode(".", $matches[1]);
@@ -139,9 +139,9 @@ class StaticsController extends Controller
                         )->first();
                         if ($page instanceof StaticsItem) {
                             return redirect()->route(
-                                "paksuco.statics.frontshow",
+                                "paksuco-statics.category.items.frontshow",
                                 [
-                                    "static" => $page
+                                    "item" => $page
                                 ]
                             );
                         };
