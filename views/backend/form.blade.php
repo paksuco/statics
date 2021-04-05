@@ -2,7 +2,9 @@
 @section("content")
 <div class="p-8 border-t">
     @include("paksuco-statics::backend.submitresults")
-    <form method="POST" action="{{$edit ? route('paksuco.statics.update', $static) : route('paksuco.statics.store')}}">
+    <form method="POST" action="{{$edit
+    ? route('paksuco-statics.category.items.update', ['static_category' => $category, 'item' =>  $static])
+    : route('paksuco-statics.category.items.store', ['static_category' => $category])}}">
         @if($edit)
         @method("PUT")
         @endif
@@ -11,7 +13,7 @@
             <div class="flex mb-4">
                 <div class="w-2/3">
                     <h2 class="mb-3 text-3xl font-semibold" style="line-height: 1em">
-                        {{$edit ? __("Edit FAQ Item") : __("Create a new FAQ Item")}}
+                        {{$edit ? __("Edit $title") : __("Create a new $title")}}
                     </h2>
                 </div>
                 <div class="w-1/3 text-right">
@@ -31,7 +33,7 @@
             </div>
             <input type="text" name="title" placeholder="@lang('Enter Title')"
                 class="w-full p-2 px-4 mb-3 text-2xl border rounded-sm shadow-inner" value="{{$edit ? (old("title") ?? $static->title) : old("title")}}">
-            <select name="category_id" class="w-full p-2 px-4 mb-3 text-xl border rounded-sm shadow-inner">
+            <select name="category_id" class="w-full p-2 px-4 mb-3 text-xl border rounded-sm shadow-inner form-select">
                 <option value="">@lang("- Select a Category -")</option>
                 @foreach ($categories as $category)
                     <option value="{{$category->id}}"
@@ -67,11 +69,14 @@
             { title: 'Test template 1', content: 'Test 1' },
             { title: 'Test template 2', content: 'Test 2' }
         ],
+        relative_urls : false,
+        remove_script_host : false,
+        convert_urls : true,
         images_upload_handler: function (blobInfo, success, failure) {
            var xhr, formData;
            xhr = new XMLHttpRequest();
            xhr.withCredentials = false;
-           xhr.open('POST', '{{route("paksuco.statics.upload")}}');
+           xhr.open('POST', '{{route("paksuco-statics.upload")}}');
            var token = '{{ csrf_token() }}';
            xhr.setRequestHeader("X-CSRF-Token", token);
            xhr.onload = function() {

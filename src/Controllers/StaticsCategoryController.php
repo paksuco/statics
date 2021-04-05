@@ -11,51 +11,12 @@ use Paksuco\Statics\Models\StaticsItem;
 class StaticsCategoryController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request)
-    {
-        $parent = $request->has("category") ? $request->category : null;
-        $model  = $parent
-        ? StaticsCategory::where("slug", $parent)->first()
-        : null;
-        $title      = $model ? \Illuminate\Support\Str::singular($model->title) . " Categories" : "Categories";
-        $categories = $model
-            ? StaticsCategory::setParent($parent)
-            ->select(["id", "title"])
-            ->get()
-            ->pluck("title", "id")
-            : StaticsCategory::select(["id", "title"])
-            ->get()
-            ->pluck("title", "id");
-
-        return view("paksuco-statics::backend.categories", [
-            "extends"    => config("paksuco-statics.backend.template_to_extend", "layouts.app"),
-            "categories" => $categories,
-            "title"      => $title,
-            "parent"     => $parent
-        ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        // not implemented on separate page
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, StaticsCategory $static_category)
     {
         $request->merge([
             "slug" => Str::slug($request->title ?? "")
@@ -63,7 +24,8 @@ class StaticsCategoryController extends Controller
 
         $request->validate([
             "title" => "required|filled",
-            "slug" => "unique:statics_categories,slug,NULL,id",
+            "slug" => "unique:statics_categories,slug,NULL,id,parent_id,$static_category->id",
+            "order" => "required|filled|numeric",
             "description" => "present"
         ]);
 
@@ -71,11 +33,11 @@ class StaticsCategoryController extends Controller
         $category->title = $request->title;
         $category->slug = Str::slug($request->title);
         $category->description = $request->description;
-        $category->order = 0;
+        $category->order = $request->order;
         $category->parent_id = $request->parent_id ?? null;
         $category->save();
 
-        return redirect()->route("paksuco.staticcategory.index")
+        return redirect()->route("paksuco-statics.category.base.show", ["static_category" => $static_category])
             ->with("success", "Category successfully created.");
     }
 
@@ -98,28 +60,11 @@ class StaticsCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function frontshow(StaticsCategory $category)
+    public function frontshow(StaticsCategory $static_category)
     {
         return view("paksuco-statics::frontend.showcategory", [
-            "statics" => $category->items,
+            "statics" => $static_category->items,
             "extends" => config("paksuco-statics.frontend.template_to_extend", "layouts.app"),
-        ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $static = StaticsItem::findOrFail($id);
-
-        return view("paksuco-statics::backend.form", [
-            "extends" => config("paksuco-statics.backend.template_to_extend", "layouts.app"),
-            "edit" => true,
-            "static" => $static,
         ]);
     }
 
@@ -127,10 +72,11 @@ class StaticsCategoryController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  StaticsCategory  $static_category  The base category
+     * @param  StaticsCategory  $category         The category being edited
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, StaticsCategory $static_category, StaticsCategory $category)
     {
         $request->merge([
             "slug" => Str::slug($request->title ?? "")
@@ -139,20 +85,20 @@ class StaticsCategoryController extends Controller
         $request->validate([
             "id" => "required|exists:statics_categories,id",
             "title" => "required|filled",
-            "slug" => "unique:statics_categories,slug,$id,id",
+            "order" => "required|filled|numeric",
+            "slug" => "unique:statics_categories,slug,$category->id,id,parent_id,$static_category->id",
             "description" => "present",
-            "parent_id" => "present|not_in:$id"
+            "parent_id" => "required|numeric|min:1|not_in:$category->id"
         ]);
 
-        $category = StaticsCategory::find($id);
         $category->title = $request->title;
         $category->slug = Str::slug($request->title);
         $category->description = $request->description;
-        $category->order = 0;
-        $category->parent_id = $request->parent_id ?? null;
+        $category->order = $request->order;
+        $category->parent_id = $request->parent_id;
         $category->save();
 
-        return redirect()->route("paksuco.staticcategory.index")
+        return redirect()->route("paksuco-statics.category.base.show", ["static_category" => $static_category])
             ->with("success", "Category successfully updated.");
     }
 
@@ -162,12 +108,13 @@ class StaticsCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(StaticsCategory $category)
+    public function destroy(StaticsCategory $static_category, StaticsCategory $category)
     {
-        $category->delete();
-
+        if ($category->is_deletable) {
+            $category->delete();
+        }
         return redirect()
-            ->route("paksuco.staticcategory.index")
+            ->route("paksuco-statics.category.base.show", ["static_category" => $static_category])
             ->with("success", "Category has been successfully deleted.");
     }
 }

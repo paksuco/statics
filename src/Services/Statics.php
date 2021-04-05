@@ -38,7 +38,7 @@ class Statics
 
     public function pushItem(MenuContainer $menu, StaticsItem $item)
     {
-        $menu->addItem($item->title, route("paksuco.statics.frontshow", ["static" => $item]), "", null, $item->order);
+        $menu->addItem($item->title, route("paksuco-statics.category.items.frontshow", ["item" => $item]), "", null, $item->order);
     }
 
     public function getCategories($parentSlug)

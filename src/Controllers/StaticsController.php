@@ -17,15 +17,15 @@ class StaticsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(StaticsCategory $static_category)
     {
-        $parent = $request->has("category") ? $request->category : null;
-        $model = $parent ? StaticsCategory::where("slug", $parent)->first() : null;
-        $title = $model ? \Illuminate\Support\Str::singular($model->title) . " Items" : "Static Items";
+        $model = $static_category;
+        $title = Str::singular($model->title) . " Items";
 
         return view("paksuco-statics::backend.index", [
             "extends" => config("paksuco-statics.backend.template_to_extend", "layouts.app"),
             "title" => $title,
+            "parent" => $model
         ]);
     }
 
@@ -34,12 +34,14 @@ class StaticsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(StaticsCategory $static_category)
     {
         return view("paksuco-statics::backend.form", [
             "extends" => config("paksuco-statics.backend.template_to_extend", "layouts.app"),
             "edit" => false,
-            "categories" => StaticsCategory::all(),
+            "category" => $static_category,
+            "title" => Str::singular($static_category->title),
+            "categories" => StaticsCategory::setParent($static_category)->get(),
             "static" => null,
         ]);
     }
@@ -50,7 +52,7 @@ class StaticsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, StaticsCategory $static_category)
     {
         $request->validate([
             "title" => "required|filled",
@@ -59,14 +61,14 @@ class StaticsController extends Controller
         $request->merge(["slug" => Str::slug($request->title)]);
 
         $request->validate([
-            "slug" => "unique:statics_items,slug,NULL,id",
             "content" => "required|filled",
-            "category_id" => "present",
+            "category_id" => "required|bail",
+            "slug" => "unique:statics_items,slug,NULL,id,category_id," . $request->category_id,
             "publish" => "required|filled",
         ]);
 
         $static = new StaticsItem();
-        $static->category_id = $category_id ?? null;
+        $static->category_id = $request->category_id ?? null;
         $static->title = $request->title;
         $static->slug = Str::slug($request->title);
         $static->content = $request->content;
@@ -77,7 +79,7 @@ class StaticsController extends Controller
         $static->visits = 0;
         $static->save();
 
-        return redirect()->route("paksuco.statics.index")->with("success", "Page has been successfully created.");
+        return redirect()->route("paksuco-statics.category.items.index", ["static_category" => $static_category])->with("success", "Page has been successfully created.");
     }
 
     /**
@@ -99,32 +101,68 @@ class StaticsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function frontshow(StaticsItem $static)
+    public function frontshow(StaticsItem $item)
     {
-        $content = $static->content;
+        $content = $item->content;
         $matches = null;
         if (preg_match("/\[link-to-route:(.+)\]/", $content, $matches) > 0) {
             $route = $matches[1];
             if (Route::has($route)) {
                 return redirect()->route($route);
             };
-        } else if (preg_match("/\[link-to-category:(.+)\]/", $content, $matches) > 0) {
+        } elseif (preg_match("/\[link-to-category:(.+)\]/", $content, $matches) > 0) {
             $slug = $matches[1];
             $category = StaticsCategory::where('slug', '=', $slug)->first();
             if ($category instanceof StaticsCategory) {
                 return redirect()->route("paksuco.staticcategory.frontshow", ["category" => $category]);
             };
-        } else if (preg_match("/\[link-to-page:(.+)\]/", $content, $matches) > 0) {
-            $slug = $matches[1];
-            $page = StaticsItem::where('slug', '=', $slug)->first();
-            if ($page instanceof StaticsItem) {
-                return redirect()->route("paksuco.statics.frontshow", ["static" => $page]);
-            };
+        } elseif (preg_match("/\[link-to-page:(.+)\]/", $content, $matches) > 0) {
+            $path = explode(".", $matches[1]);
+            if (count($path) == 2) {
+                list($category, $slug) = $path;
+            } elseif (count($path) == 1) {
+                list($category, $slug) = [null, $path];
+            } else {
+                list($category, $slug) = [null, null];
+            }
+            if ($slug) {
+                $page = null;
+                if ($category) {
+                    $category = StaticsCategory::where("slug", "=", $category)
+                        ->first();
+                    if ($category instanceof StaticsCategory) {
+                        $page = StaticsItem::where(
+                            [
+                                "slug" => $slug,
+                                "category_id" => $category->id
+                            ]
+                        )->first();
+                        if ($page instanceof StaticsItem) {
+                            return redirect()->route(
+                                "paksuco.statics.frontshow",
+                                [
+                                    "static" => $page
+                                ]
+                            );
+                        };
+                    }
+                } else {
+                    $page = StaticsItem::where('slug', '=', $slug)->first();
+                    if ($page instanceof StaticsItem) {
+                        return redirect()->route(
+                            "paksuco.statics.frontshow",
+                            [
+                                "static" => $page
+                            ]
+                        );
+                    };
+                }
+            }
         }
 
         return view("paksuco-statics::frontend.show", [
             "extends" => config("paksuco-statics.frontend.template_to_extend", "layouts.app"),
-            "static" => $static,
+            "static" => $item,
         ]);
     }
 
@@ -134,13 +172,15 @@ class StaticsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(StaticsItem $static)
+    public function edit(StaticsCategory $static_category, StaticsItem $item)
     {
         return view("paksuco-statics::backend.form", [
             "extends" => config("paksuco-statics.backend.template_to_extend", "layouts.app"),
             "edit" => true,
-            "static" => $static,
-            "categories" => StaticsCategory::all(),
+            "category" => $static_category,
+            "static" => $item,
+            "title" => Str::singular($static_category->title),
+            "categories" => StaticsCategory::setParent($static_category)->get(),
         ]);
     }
 
@@ -151,7 +191,7 @@ class StaticsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, StaticsItem $static)
+    public function update(Request $request, StaticsCategory $static_category, StaticsItem $item)
     {
         $request->validate([
             "title" => "required|filled",
@@ -160,21 +200,22 @@ class StaticsController extends Controller
         $request->merge(["slug" => Str::slug($request->title)]);
 
         $request->validate([
-            "slug" => "unique:statics_items,slug," . $static->id . ",id",
             "content" => "required|filled",
-            "category_id" => "present",
+            "category_id" => "required|bail",
             "publish" => "required|filled",
+            "slug" => "unique:statics_items,slug," . $item->id . ",id,category_id," . $request->category_id,
         ]);
 
-        $static->title = $request->title;
-        $static->content = $request->content;
-        $static->slug = Str::slug($request->title);
+        $item->title = $request->title;
+        $item->content = $request->content;
+        $item->category_id = $request->category_id;
+        $item->slug = Str::slug($request->title);
         if ($request->publish != "0") {
-            $static->published = $request->publish == "1" ? true : false;
+            $item->published = $request->publish == "1" ? true : false;
         }
-        $static->save();
+        $item->save();
 
-        return redirect()->route("paksuco.statics.index")->with("success", "Page successfully updated");
+        return redirect()->route("paksuco-statics.category.items.index", ["static_category" => $static_category])->with("success", __("Page successfully updated"));
     }
 
     /**
@@ -183,10 +224,12 @@ class StaticsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(StaticsItem $static)
+    public function destroy(StaticsCategory $static_category, StaticsItem $item)
     {
-        $static->delete();
-        return redirect()->route("paksuco.statics.index")->with("success", "STATIC Item has been successfully deleted");
+        if ($item->is_deletable) {
+            $item->delete();
+        }
+        return redirect()->route("paksuco-statics.category.items.index", ["static_category" => $static_category])->with("success", __("Page has been successfully deleted"));
     }
 
     public function upload(Request $request)

@@ -2,7 +2,7 @@
 @section("content")
 <div class="flex min-h-screen border-b">
     <div class="flex-shrink-0 px-6 py-8 bg-cool-gray-200 w-80">
-        <form action="{{route('paksuco.staticcategory.store')}}" method="POST" id="new_category_form" x-data="{}">
+        <form action="{{route('paksuco-statics.category.store', ['static_category' => $parent])}}" method="POST" id="new_category_form" x-data="{}">
             <h2 class="mb-3 text-xl font-semibold leading-6 add_form_visible">@lang('Add New Category')</h2>
             <h2 class="hidden mb-3 text-xl font-semibold leading-6 edit_form_visible">@lang('Edit Category')</h2>
             <input type="hidden" name="_method" value="POST" id="category_submit_type">
@@ -11,6 +11,10 @@
             <div class="mb-3">
                 <label class="w-full text-sm font-semibold">@lang("Category Name")</label>
                 <div class="w-full"><input type="text" name="title" x-ref="title" class="w-full form-input"></div>
+            </div>
+            <div class="mb-3">
+                <label class="w-full text-sm font-semibold">@lang("Order")</label>
+                <div class="w-full"><input type="number" name="order" x-ref="order" class="w-full form-input"></div>
             </div>
             <div class="mb-3">
                 <label class="w-full text-sm font-semibold">@lang("Description")</label>
@@ -64,10 +68,11 @@
             .then(response => response.json())
             .then((data) => {
                 var form = document.querySelector("#new_category_form");
-                form.action = "{{route('paksuco.staticcategory.index')}}/" + data.id;
+                form.action = "{{route('paksuco-statics.category.index', ['static_category' => $parent])}}/" + data.slug;
                 form.querySelector("[name='_method']").value = "PUT";
                 form.querySelector("[name='id']").value = data.id;
                 form.querySelector("[x-ref='title']").value = data.title;
+                form.querySelector("[x-ref='order']").value = data.order;
                 form.querySelector("[x-ref='description']").innerText = data.description;
                 form.querySelector("[x-ref='parent_id']").value = data.parent_id;
                 form.querySelectorAll(".edit_form_visible").forEach(i => i.classList.remove("hidden"));
@@ -77,9 +82,10 @@
     var resetForm = function() {
         var form = document.querySelector("#new_category_form");
         form.querySelector("[name='_method']").value = "POST";
-        form.action = "{{route('paksuco.staticcategory.store')}}";
+        form.action = "{{route('paksuco-statics.category.store', ['static_category' => $parent])}}";
         form.querySelector("[name='id']").value = "";
         form.querySelector("[x-ref='title']").value = "";
+        form.querySelector("[x-ref='order']").value = "0";
         form.querySelector("[x-ref='description']").innerText = "";
         form.querySelector("[x-ref='parent_id']").value = "";
         form.querySelectorAll(".edit_form_visible").forEach(i => i.classList.add("hidden"));

@@ -24,6 +24,15 @@ class StaticsCategoriesTable extends \Paksuco\Table\Contracts\TableSettings
             "filterable" => false,
         ],
         [
+            "title" => "Parent Category",
+            "name" => "parent_id",
+            "type" => "callback",
+            "format" => StaticsCategoriesTable::class . "::getParentTitle",
+            "sortable" => true,
+            "queryable" => true,
+            "filterable" => true,
+        ],
+        [
             "name" => "title",
             "type" => "field",
             "format" => "string",
@@ -49,15 +58,6 @@ class StaticsCategoriesTable extends \Paksuco\Table\Contracts\TableSettings
             "filterable" => false,
         ],
         [
-            "title" => "Parent Category",
-            "name" => "parent_id",
-            "type" => "callback",
-            "format" => StaticsCategoriesTable::class . "::getParentTitle",
-            "sortable" => true,
-            "queryable" => true,
-            "filterable" => true,
-        ],
-        [
             "name" => "created_at",
             "type" => "field",
             "format" => "datetime",
@@ -78,8 +78,10 @@ class StaticsCategoriesTable extends \Paksuco\Table\Contracts\TableSettings
 
     public function getFilters($request)
     {
-        $parent = isset($request["category"]) ? $request["category"] : null;
-        return function ($query) use($parent) {
+        $params = $request["route"];
+        $parent = isset($params["static_category"]) ? $params["static_category"] : null;
+        $parent = StaticsCategory::find($parent["id"]);
+        return function ($query) use ($parent) {
             if ($parent) {
                 $query->setParent($parent);
             }
@@ -100,7 +102,7 @@ class StaticsCategoriesTable extends \Paksuco\Table\Contracts\TableSettings
         return $item->is_deletable ?
         "<a href='#new_category_form'>
             <button type='button' class='px-3 py-1 mr-1 text-white bg-indigo-700 rounded shadow' onclick='editCategory({$item->id})'>" . __("Edit") . "</button>
-        </a><form action='" . route("paksuco.staticcategory.destroy", $item->id) . "' method='POST'>
+        </a><form action='" . route("paksuco-statics.category.destroy", ['static_category' => $item->baseCategory(), 'category' => $item]) . "' method='POST'>
             <input name='_token'  type='hidden' value='" . csrf_token() . "'>
             <input name='_method' type='hidden' value='DELETE'>
             <button type='submit' class='px-3 py-1 text-white bg-red-700 rounded shadow'>" . __("Delete") . "</button>
