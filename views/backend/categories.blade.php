@@ -13,7 +13,7 @@
                 <div class="w-full"><input type="text" name="title" x-ref="title" class="w-full form-input"></div>
             </div>
             <div class="mb-3">
-                <label class="w-full text-sm font-semibold">@lang("Order")</label>
+                <label class="w-full text-sm font-semibold">@lang("Order #")</label>
                 <div class="w-full"><input type="number" name="order" x-ref="order" class="w-full form-input"></div>
             </div>
             <div class="mb-3">
