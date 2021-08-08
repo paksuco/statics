@@ -2,6 +2,7 @@
 
 namespace Paksuco\Statics\Services;
 
+use Illuminate\Support\Facades\Cache;
 use Paksuco\Menu\MenuContainer;
 use Paksuco\Statics\Models\StaticsCategory;
 use Paksuco\Statics\Models\StaticsItem;
@@ -43,6 +44,8 @@ class Statics
 
     public function getCategories($parentSlug)
     {
-        return StaticsCategory::where("slug", $parentSlug)->first()->children;
+        return Cache::remember('statics::categories-'.$parentSlug, 30 * 60, function () use ($parentSlug) {
+            return StaticsCategory::where("slug", $parentSlug)->first()->children;
+        });
     }
 }
