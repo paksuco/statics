@@ -55,7 +55,6 @@
 </div>
 <script>
     var editCategory = function(row) {
-        console.log(row);
         fetch("/api/staticcategory/" + row, {
                 method: 'GET'
                 , mode: 'cors'
